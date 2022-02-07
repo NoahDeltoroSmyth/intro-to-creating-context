@@ -1,4 +1,5 @@
-import { useState, useContext, createContext } from 'react'
+import { useState, useContext, createContext, useEffect } from 'react'
+import fetchUser from '../services/user'
 
 // create context
 const UserContext = createContext()
@@ -7,8 +8,17 @@ const UserContext = createContext()
 const UserProvider = ({ children }) => {
   // set state
   const [user, setUser] = useState({})
+  useEffect(() => {
+    fetchUser()
+      .then((fetchedUser) => {
+        setUser(fetchedUser)
+      })
+      .catch((error) => {
+        throw new Error(`Error: ${error}`)
+      })
+  }, [])
   // set state to a variable
-  const contextValue = { user, setUser }
+  const contextValue = { user }
   // return UserContext.Provider with value of state
   return <UserContext.Provider value={contextValue}>{children}</UserContext.Provider>
 }
